@@ -9,6 +9,8 @@ namespace Studienummer_Claes_Berg_Mortensen
         bool stayAlive;
         string purchaceSyntax = "";
         string systemTitle = "TREOENS STREGSYSTEM: Den virtuelle stue";
+        int windowHeight = 32;
+        int windowWidth = 32;
 
         public event StregsystemEvent CommandEntered;
 
@@ -64,15 +66,18 @@ namespace Studienummer_Claes_Berg_Mortensen
 
         public void Start()
         {
+            Console.SetWindowSize(windowWidth, windowHeight);
+            Menu();
             stayAlive = true;
 
             while (stayAlive)
             {
-                string input = Console.ReadLine();
+                CommandEntered.Invoke(Console.ReadLine());
             }
         }
         public void Menu()
         {
+            Console.Clear();
             //find en eller anden måde at tegne en menu på lol
         }
     }
