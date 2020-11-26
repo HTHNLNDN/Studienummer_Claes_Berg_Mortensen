@@ -1,4 +1,5 @@
 ﻿using Studienummer_Claes_Berg_Mortensen.Core;
+using Studienummer_Claes_Berg_Mortensen.Events;
 using Studienummer_Claes_Berg_Mortensen.Interfaces;
 using System;
 
@@ -11,8 +12,9 @@ namespace Studienummer_Claes_Berg_Mortensen
         string systemTitle = "TREOENS STREGSYSTEM: Den virtuelle stue";
         int windowHeight = 32;
         int windowWidth = 32;
+        IStregsystem _stregsystem;
 
-        public event StregsystemEvent CommandEntered;
+        public event  Events.CommandEnteredArgs 
 
         public void Close()
         {
@@ -68,17 +70,23 @@ namespace Studienummer_Claes_Berg_Mortensen
         {
             Console.SetWindowSize(windowWidth, windowHeight);
             Menu();
+            _stregsystem.UserbalanceWarning += UserBalanceNotification;
             stayAlive = true;
 
             while (stayAlive)
             {
-                CommandEntered.Invoke(Console.ReadLine());
+                CommandEntered.Invoke(Console.ReadLine()); //?
             }
         }
         public void Menu()
         {
             Console.Clear();
+
             //find en eller anden måde at tegne en menu på lol
+        }
+        public void UserBalanceNotification(UserBalanceNotificationArgs e)
+        {
+            Console.WriteLine("Lmao u need to put money on your account peasant");
         }
     }
 }
