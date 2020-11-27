@@ -110,13 +110,11 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
             return id.CompareTo(obj);
         }
-        private void IsBalanceAboveRequired()
-        {
-            if (_balance < 50)
-            {
-                //must invoke UserBalanceNotif
-            }
-        }
+
+        /// <summary>
+        /// Converts user to a string
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"{_firstname} {_lastname} Balance: {_balance}";

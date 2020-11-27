@@ -8,6 +8,9 @@ namespace Studienummer_Claes_Berg_Mortensen.Interfaces
 
     public delegate void UserBalanceNotification(UserBalanceNotificationArgs e);
 
+    /// <summary>
+    /// IStregsystem acts as an interface for all logic in the program
+    /// </summary>
     public interface IStregsystem
     {
         IEnumerable<Product> ActiveProducts();

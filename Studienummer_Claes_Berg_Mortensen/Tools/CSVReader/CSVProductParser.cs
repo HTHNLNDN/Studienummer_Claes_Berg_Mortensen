@@ -9,6 +9,11 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
         }
 
+        /// <summary>
+        /// parses a list of lists into a list of products, returns a list of prodcts
+        /// </summary>
+        /// <param name="saa"></param>
+        /// <returns></returns>
         public override List<Product> ParseCSV(List<List<string>> saa)
         {
             List<Product> products = new List<Product>();

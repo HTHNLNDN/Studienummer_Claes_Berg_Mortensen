@@ -9,6 +9,11 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
         }
 
+        /// <summary>
+        /// parss a CSV to be used in the user lidt, does this based on a filename a seperator and a list of lists
+        /// </summary>
+        /// <param name="saa"></param>
+        /// <returns></returns>
         public override List<User> ParseCSV(List<List<string>> saa)
         {
             List<User> users = new List<User>();

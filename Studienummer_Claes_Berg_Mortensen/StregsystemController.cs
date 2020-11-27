@@ -87,6 +87,12 @@ namespace Studienummer_Claes_Berg_Mortensen
                 return;
             }
         }
+        /// <summary>
+        /// Handles a user purchase based on the given product ID
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="productID"></param>
+        /// <param name="productAmount"></param>
         public void HandlePurchase(string username, int productID, int productAmount)
         {
             User user = null;
@@ -101,8 +107,7 @@ namespace Studienummer_Claes_Berg_Mortensen
                 return;
             }
             product = _stregsystem.GetProductByID(productID);
-            for(int i = 1; i <= productAmount; i++)
-            {
+            
                 BuyTransaction userTransaction = null;
                 try
                 {
@@ -113,26 +118,50 @@ namespace Studienummer_Claes_Berg_Mortensen
                     _stregystemui.DisplayuProductNotFound(Convert.ToString(product.ID));
                     return;
                 }
-                _stregystemui.DisplayUserBuysProduct(userTransaction);
-            }
+                if (productAmount == 1)
+                    _stregystemui.DisplayUserBuysProduct(userTransaction);
+                else
+                    _stregystemui.DisplayUserBuysProduct(productAmount, userTransaction);
+            
         }   
+        /// <summary>
+        /// Sets the product to purchaseable on credit based on the product ID
+        /// </summary>
+        /// <param name="productID"></param>
         public void HandlePurchaseableOnCredit(List<string> productID)
         {
             HandlePurchaseableOrNotOnCredit(productID, true);
         }
+        /// <summary>
+        /// Removes the option to purchase on credit from a product based on product ID
+        /// </summary>
+        /// <param name="productID"></param>
         public void HandleNotPurchaseableOnCredit(List<string> productID)
         {
             HandlePurchaseableOrNotOnCredit(productID, false);
         }
+        /// <summary>
+        /// activates a product based on the product ID
+        /// </summary>
+        /// <param name="productID"></param>
         public void HandleActivateProduct(List<string> productID)
         {
 
             HandleActivateAndDeactivateProduct(productID, true);
         }
+        /// <summary>
+        /// Deactivates a product based on the product ID
+        /// </summary>
+        /// <param name="productID"></param>
         public void HandleDeactivateProduct(List<string> productID)
         {
             HandleActivateAndDeactivateProduct(productID, false);
         }
+        /// <summary>
+        /// Handles the logic of changing wether or not a product is purchaseable on credit
+        /// </summary>
+        /// <param name="productID"></param>
+        /// <param name="setPurchaseableOnCredit"></param>
         public void HandlePurchaseableOrNotOnCredit(List<string> productID,bool setPurchaseableOnCredit )
         {
             int id = 0;
@@ -143,6 +172,11 @@ namespace Studienummer_Claes_Berg_Mortensen
             Product product = _stregsystem.GetProductByID(id);
             product.CanBeBoughtOnCredit = setPurchaseableOnCredit;
         }
+        /// <summary>
+        /// Andles the logic behind activating and deactivating products based on ID
+        /// </summary>
+        /// <param name="productID"></param>
+        /// <param name="setActive"></param>
         public void HandleActivateAndDeactivateProduct(List<string> productID, bool setActive)
         {
             int id = 0;
@@ -154,6 +188,10 @@ namespace Studienummer_Claes_Berg_Mortensen
             //if (product.GetType != SeasonalProduct)
                 product.Active = setActive;
         }
+        /// <summary>
+        /// Adds credits (stregdollars) to a user based on the username and amount of credit
+        /// </summary>
+        /// <param name="args"></param>
         public void HandleAddCreditToUser(List<string> args)
         {
             User user = _stregsystem.GetUserByUsername(args[0]);

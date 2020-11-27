@@ -21,6 +21,13 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
             LoadUsers();
             LoadProducts();
         }
+
+        /// <summary>
+        /// Handles the buying of products using a user and the product they're trying to buy
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="product"></param>
+        /// <returns></returns>
         public BuyTransaction BuyProduct(User user, Product product)
         {
             BuyTransaction buyTransactions = new BuyTransaction(user, product, _transactionList.Count);
@@ -31,6 +38,12 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
             _transactionList.Add(buyTransactions);
             return buyTransactions;
         }
+        /// <summary>
+        /// Takes a user and inserts credits to their account based on the amount passed in this method
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public InsertCashTransaction AddCreditsToAccount(User user, int amount) 
         {
             InsertCashTransaction insertCashTransaction = new InsertCashTransaction(user, amount, _transactionList.Count);
@@ -39,7 +52,12 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
             _transactionList.Add(insertCashTransaction);
             return insertCashTransaction;
         }
-        //void ExecuteTransaction(transaction) { }
+
+        /// <summary>
+        /// takes a product id and searches the product list for the matching product, returns matching product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Product GetProductByID(int id)
         {
             Product product = _productList.Find(p => p.ID == id);
@@ -47,10 +65,21 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
                 throw new ProductNotFoundException();
             return product;
         }
+        /// <summary>
+        /// Takes a predicate and finds a user based on this, returns a user
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
         public User GetUser(Predicate<User> predicate)
         {
             return _userList.Find(predicate);
         }
+
+        /// <summary>
+        /// Finds a user by seraching the user list for a matching username, returns the matching user
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         public User GetUserByUsername(string username)
         {
 
@@ -60,6 +89,12 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
             return user;
         }
 
+        /// <summary>
+        /// searches the transaction list for transactions of a certain user and returns a list of x (based on count) transactions
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public IEnumerable<Transaction> GetTransactions(User user, int count)
         {
 
@@ -69,15 +104,27 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
             return newTransactionList;
         }
 
+        /// <summary>
+        /// Returns a list of active products in the product list
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Product> ActiveProducts()
         {
             return _productList.Where(p => p.Active == true);
         }
+
+        /// <summary>
+        /// Loads all users from a file into a user list
+        /// </summary>
         void LoadUsers()
         {
             CSVUserParser cSVUserParser = new CSVUserParser("users.csv", ',');
             _userList = cSVUserParser.ParseCSV( cSVUserParser.ReadAndSeperateCSVFile());
         }
+
+        /// <summary>
+        /// Loads all products from a file into a product list
+        /// </summary>
         void LoadProducts()
         {
             CSVProductParser cSVProductParser = new CSVProductParser("products.csv", ';');

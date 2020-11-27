@@ -12,7 +12,10 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
             Filename = filename;
             Seperator = seperator;
         }
-
+        /// <summary>
+        /// reads and reperates a CSV file based on a seperator and a filename, returns a list of lists (of strings)
+        /// </summary>
+        /// <returns></returns>
         public List<List<string>> ReadAndSeperateCSVFile()
         {
             List<List<string>> CSVFileData = new List<List<string>>();
@@ -31,6 +34,11 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
             return CSVFileData;
 
         }
+        /// <summary>
+        /// takes a list of lists and parses it based on certain conditions, returns a list of a certain type
+        /// </summary>
+        /// <param name="saa"></param>
+        /// <returns></returns>
         public abstract List<T> ParseCSV (List<List<string>> saa);
 
     }

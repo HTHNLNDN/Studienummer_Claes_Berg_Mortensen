@@ -5,6 +5,9 @@ using System.Collections.Generic;
 namespace Studienummer_Claes_Berg_Mortensen.Interfaces
 {
     public delegate void CommandEntered(CommandEnteredArgs e);
+    /// <summary>
+    /// IStregsystemUI acts as an interface for all UI, meaning all that is printed to the console
+    /// </summary>
     public interface IStregsystemUI
     {
         void DisplayUserNotFound(string username);
