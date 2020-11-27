@@ -7,13 +7,13 @@ namespace Studienummer_Claes_Berg_Mortensen.Tools
         static public bool NameValidation(string name)
         {
             if (name.Length > 0)
-                return false;
-            else
                 return true;
+            else
+                return false;
         }
         static public bool UsernameVAlidation(string username)
         {
-            string usernamePattern = @"^[a-z0-9_]";
+            string usernamePattern = @"^[a-zA-Z0-9_]+$";
             if ((username.Length > 0) && (Regex.IsMatch(username, usernamePattern)))
                 return true;
             else
@@ -22,7 +22,7 @@ namespace Studienummer_Claes_Berg_Mortensen.Tools
 
         static public bool EmailValidation(string email)
         {
-            string emailPattern = @"^[a-zA-Z0-9_.-]+@\b[a-zA-Z0-9_.-]\.^[a-zA-Z0-9_.-]";
+            string emailPattern = @"^[\w\.\-\,]+@[a-zA-Z0-9][a-zA-Z0-9\.\-]+\.[a-zA-Z0-9]+$";
             return Regex.IsMatch(email, emailPattern);
                 
 

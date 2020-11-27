@@ -4,32 +4,32 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
 {
     public class BuyTransaction : Transaction
     {
-        Product product;
-        public BuyTransaction(User user, Product product) : base(user, product.Price * -1)
-        {
-            Product = product;
-        }
+        Product _product;
         public Product Product
         {
             get
             {
-                return product;
+                return _product;
             }
             set
             {
-                product = value;
+                _product = value;
             }
+        }
+        public BuyTransaction(User user, Product product, int iD) : base(user, product.Price * -1, iD)
+        {
+            Product = product;
         }
         public override string ToString()
         {
-            return $"Køb: {base.ToString()}";
+            return $"Køb af {_product.Name}: {base.ToString()}";
         }
 
         public override void Execute()
         {
-            if (product.Active == false)
-                throw new ProductInactiveException(); //inset en eller anden exception for inaktivt produkt
-            if (User.Balance < Amount && product.CanBeBoughtOnCredit == false)
+            if (_product.Active == false)
+                throw new ProductInactiveException(_product, "Product is inactive"); 
+            if (User.Balance < Amount && _product.CanBeBoughtOnCredit == false)
                 throw new BalanceTooLowException(User, Product, $"Bruger: {User.Username} har ikke nok stregdollars til dette køb");
             else
                 base.Execute();

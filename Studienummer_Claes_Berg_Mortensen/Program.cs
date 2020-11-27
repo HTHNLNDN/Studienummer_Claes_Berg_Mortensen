@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Studienummer_Claes_Berg_Mortensen.Core;
+using Studienummer_Claes_Berg_Mortensen.Interfaces;
+using System;
 
 namespace Studienummer_Claes_Berg_Mortensen
 {
@@ -6,7 +8,11 @@ namespace Studienummer_Claes_Berg_Mortensen
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            IStregsystem stregsystem = new Stregsystem();
+            IStregsystemUI ui = new StregsystemCLI(stregsystem);
+            StregsystemController sc = new StregsystemController(ui, stregsystem);
+
+            ui.Start();
         }
     }
 }

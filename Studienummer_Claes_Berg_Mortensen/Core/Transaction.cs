@@ -5,37 +5,34 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
 {
     public class Transaction
     {
-        int id;
-        User user;
-        DateTime date;
-        decimal amount;
+        int _id;
+        User _user;
+        DateTime _date;
+        decimal _amount;
 
-        public Transaction(User user, decimal amount)
-        {
 
-        }
 
         public int ID
         {
             get
             {
-                return id;
+                return _id;
             }
             set
             {
-                id = value;
+                _id = value;
             }
         }
         public User User
         {
             get
             {
-                return user;
+                return _user;
             }
             set
             {
                 if (Validation.NullValidation(value))
-                    user = value;
+                    _user = value;
                 else
                     throw new ArgumentNullException("User cannot be empty");
             }
@@ -44,32 +41,39 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
             get
             {
-                return date;
+                return _date;
             }
             set
             {
-                date = value;
+                _date = value;
             }
         }
         public decimal Amount
         {
             get
             {
-                return amount;
+                return _amount;
             }
             set
             {
-                amount = value;
+                _amount = value;
             }
+        }
+        public Transaction(User user, decimal amount, int iD)
+        {
+            User = user;
+            Amount = amount;
+            ID = iD;
         }
         public virtual void Execute()
         {
             Date = DateTime.Now;
-            User.Balance += amount;
+            User.Balance += _amount;
         }
         public override string ToString()
         {
-            return $"Transaktions ID: {id}, Bruger: {user.ToString()}, Dato: {date}";
+
+            return $"Transaktions ID: {_id}, Bruger: {_user.ToString()}, Dato: {_date}";
         }
     }
 }

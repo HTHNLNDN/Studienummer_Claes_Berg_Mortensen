@@ -2,19 +2,23 @@
 using Studienummer_Claes_Berg_Mortensen.Events;
 using Studienummer_Claes_Berg_Mortensen.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace Studienummer_Claes_Berg_Mortensen
 {
     public class StregsystemCLI : IStregsystemUI
     {
-        bool stayAlive;
+        bool stayAlive = false;
         string purchaceSyntax = "";
         string systemTitle = "TREOENS STREGSYSTEM: Den virtuelle stue";
-        int windowHeight = 32;
-        int windowWidth = 32;
         IStregsystem _stregsystem;
 
-        public event  Events.CommandEnteredArgs 
+        public StregsystemCLI(IStregsystem stregsystem)
+        {
+            _stregsystem = stregsystem;
+        }
+
+        public event Interfaces.CommandEntered CommandEntered;
 
         public void Close()
         {
@@ -41,9 +45,9 @@ namespace Studienummer_Claes_Berg_Mortensen
             Console.WriteLine($"Der er blevet indtastet for mange argumenter, syntax for køb er: {purchaceSyntax}");
         }
 
-        public void DisplayuProductNotFound(string product)
+        public void DisplayuProductNotFound(string productID)
         {
-            Console.WriteLine($"Produkt med ID: {product} kunne ikke findes, prøv igen.");
+            Console.WriteLine($"Produkt med ID: {productID} kunne ikke findes, prøv igen.");
         }
 
         public void DisplayUserBuysProduct(BuyTransaction transaction)
@@ -58,30 +62,38 @@ namespace Studienummer_Claes_Berg_Mortensen
 
         public void DisplayUserInfo(User user)
         {
-            Console.WriteLine($"Bruger: {user}");
+            Console.WriteLine($"Bruger: {user} ");
         }
 
         public void DisplayUserNotFound(string username)
         {
             Console.WriteLine($"Brugeren {username} kunne ikke findes i systemet, tjek om navnet er skrevet rigtigt");
         }
+        public void DisplayPastTransactions(User user)
+        {
+            foreach (Transaction transaction in _stregsystem.GetTransactions(user, 10))
+                Console.WriteLine(transaction);
+        }
 
         public void Start()
         {
-            Console.SetWindowSize(windowWidth, windowHeight);
             Menu();
             _stregsystem.UserbalanceWarning += UserBalanceNotification;
             stayAlive = true;
 
             while (stayAlive)
             {
-                CommandEntered.Invoke(Console.ReadLine()); //?
+                Menu();
+                CommandEntered(new CommandEnteredArgs(Console.ReadLine()));
             }
         }
         public void Menu()
         {
-            Console.Clear();
-
+            Console.WriteLine($"________________________________________________________");
+            Console.WriteLine($"{systemTitle}");
+            Console.WriteLine($"________________________________________________________");
+            foreach (Product product in _stregsystem.ActiveProducts()) Console.WriteLine(product);
+            Console.WriteLine($"{Environment.NewLine}");
             //find en eller anden måde at tegne en menu på lol
         }
         public void UserBalanceNotification(UserBalanceNotificationArgs e)

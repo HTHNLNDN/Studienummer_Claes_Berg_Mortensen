@@ -1,4 +1,5 @@
 ﻿using Studienummer_Claes_Berg_Mortensen.Core;
+using Studienummer_Claes_Berg_Mortensen.CustomExceptions;
 using Studienummer_Claes_Berg_Mortensen.Events;
 using Studienummer_Claes_Berg_Mortensen.Interfaces;
 using Studienummer_Claes_Berg_Mortensen.Tools;
@@ -9,7 +10,6 @@ using System.Text.RegularExpressions;
 
 namespace Studienummer_Claes_Berg_Mortensen
 {
-    public delegate void CommandEntered(CommandEnteredArgs e);
     public class StregsystemController
     {
         IStregsystem _stregsystem;
@@ -27,29 +27,44 @@ namespace Studienummer_Claes_Berg_Mortensen
             _adminCommands.Add(":quit", (List<string> args) => stregsystemCLI.Close());
             _adminCommands.Add(":activate", (List<string> args) => HandleActivateProduct(args));  //method for handling activation
             _adminCommands.Add(":deactivate", (List<string> args) => HandleDeactivateProduct(args));
-            _adminCommands.Add("crediton", (List<string> args) => HandlePurchaseableOnCredit(args)); //method for handling product able to purchased on credit
+            _adminCommands.Add(":crediton", (List<string> args) => HandlePurchaseableOnCredit(args)); //method for handling product able to purchased on credit
             _adminCommands.Add(":creditoff", (List<string> args) => HandleNotPurchaseableOnCredit(args));
             _adminCommands.Add(":addcredits", (List<string> args) => HandleAddCreditToUser(args)); //method for handling adding credits
         }
 
-        public void ParseCommand(string command)
+        public void ParseCommand(CommandEnteredArgs e)
         {
-            if (string.IsNullOrEmpty(command) == false)
+            if (string.IsNullOrEmpty(e.Command) == false)
             {
-                command = command.ToLower();
-                List<string> commandInputs = command.Split(new char[] { ' ' }).ToList();
-                {
-                    if (_adminCommands.ContainsKey(commandInputs[0]))
-                        _adminCommands[commandInputs[0]].Invoke(commandInputs.GetRange(1, commandInputs.Count));
-                    else
-                        HandleUserInput(commandInputs);
-                }
+               
+                List<string> commandInputs = e.Command.ToLower().Split(new char[] { ' ' }).ToList();
+                if (_adminCommands.ContainsKey(commandInputs[0]))
+                    _adminCommands[commandInputs[0]].Invoke(commandInputs.GetRange(1, commandInputs.Count -1));
+                else
+                    HandleUserInput(commandInputs);
             }
         }
         public void HandleUserInput(List<string> commandInputs)
         {
+            if((commandInputs.Count == 1)||(Regex.IsMatch(commandInputs[1], @"^[1-9 ]\d*$")))
             switch (commandInputs.Count)
             {
+                case 1:
+                    {
+                        User user = null;
+                        try
+                        {
+                            user = _stregsystem.GetUserByUsername(commandInputs[0]);
+                        }
+                        catch (UserNotFoundException)
+                        {
+                            _stregystemui.DisplayUserNotFound(commandInputs[0]);
+                            return;
+                        }
+                        _stregystemui.DisplayUserInfo(user);
+                        _stregystemui.DisplayPastTransactions(user);
+                        break;
+                    }
                 case 2:
                     {
                         HandlePurchase(commandInputs[0], int.Parse(commandInputs[1]), 1);
@@ -66,17 +81,38 @@ namespace Studienummer_Claes_Berg_Mortensen
                         break;
                     }
             }
+            else
+            {
+                _stregystemui.DisplayuProductNotFound(commandInputs[1]);
+                return;
+            }
         }
         public void HandlePurchase(string username, int productID, int productAmount)
         {
-            User user;
+            User user = null;
             Product product;
-
-            user = _stregsystem.GetUserByUsername(username);
+            try
+            {
+                user = _stregsystem.GetUserByUsername(username);
+            }
+            catch (UserNotFoundException)
+            {
+                _stregystemui.DisplayUserNotFound(username);
+                return;
+            }
             product = _stregsystem.GetProductByID(productID);
             for(int i = 1; i <= productAmount; i++)
             {
-                BuyTransaction userTransaction = _stregsystem.BuyProduct(user, product);
+                BuyTransaction userTransaction = null;
+                try
+                {
+                    userTransaction = _stregsystem.BuyProduct(user, product);
+                }
+                catch (ProductInactiveException)
+                {
+                    _stregystemui.DisplayuProductNotFound(Convert.ToString(product.ID));
+                    return;
+                }
                 _stregystemui.DisplayUserBuysProduct(userTransaction);
             }
         }   
@@ -102,6 +138,8 @@ namespace Studienummer_Claes_Berg_Mortensen
             int id = 0;
             if (Regex.IsMatch(productID[0], @"^\d+$"))
                 id = int.Parse(productID[0]);
+            else
+                return;
             Product product = _stregsystem.GetProductByID(id);
             product.CanBeBoughtOnCredit = setPurchaseableOnCredit;
         }
@@ -109,15 +147,17 @@ namespace Studienummer_Claes_Berg_Mortensen
         {
             int id = 0;
             if (Regex.IsMatch(productID[0], @"^\d+$"))
-                id = int.Parse(productID[0]); 
+                id = int.Parse(productID[0]);
+            else
+                return;
             Product product = _stregsystem.GetProductByID(id);
-            if (product.GetType != SeasonalProduct)
+            //if (product.GetType != SeasonalProduct)
                 product.Active = setActive;
         }
         public void HandleAddCreditToUser(List<string> args)
         {
-            User user = _stregsystem.GetUserByUsername(args[1]);
-            int amount = int.Parse(args[2]);
+            User user = _stregsystem.GetUserByUsername(args[0]);
+            int amount = int.Parse(args[1]);
             _stregsystem.AddCreditsToAccount(user, amount);
         }
     }

@@ -2,11 +2,13 @@
 {
     public class CommandEnteredArgs
     {
+        public string Command { get; }
+
         public CommandEnteredArgs(string command)
         {
-            this.command = command;
+            Command = command;
         }
 
-        string command { get; }
+
     }
 }

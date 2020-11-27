@@ -1,7 +1,10 @@
 ﻿using Studienummer_Claes_Berg_Mortensen.Core;
+using Studienummer_Claes_Berg_Mortensen.Events;
+using System.Collections.Generic;
 
 namespace Studienummer_Claes_Berg_Mortensen.Interfaces
 {
+    public delegate void CommandEntered(CommandEnteredArgs e);
     public interface IStregsystemUI
     {
         void DisplayUserNotFound(string username);
@@ -14,7 +17,8 @@ namespace Studienummer_Claes_Berg_Mortensen.Interfaces
         void Close();
         void DisplayInsufficientCash(User user, Product product);
         void DisplayGeneralError(string errorString);
+        void DisplayPastTransactions(User user);
         void Start();
-        event StregsystemEvent CommandEntered;
+        event CommandEntered CommandEntered;
     }
 }

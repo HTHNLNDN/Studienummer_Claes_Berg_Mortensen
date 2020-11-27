@@ -8,20 +8,11 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
     public class User : IComparable
     {
         int id;
-        string firstname;
-        string lastname;
-        string username;
-        string email;
-        decimal balance;
-
-        public User(int iD, string firstname, string lastname, string username, string email, decimal balance)
-        {
-            ID = iD;
-            Firstname = firstname;
-            Lastname = lastname;
-            Username = username;
-            Email = email;
-        }
+        string _firstname;
+        string _lastname;
+        string _username;
+        string _email;
+        decimal _balance;
 
         public int ID
         {
@@ -40,12 +31,12 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
             get
             {
-                return firstname;
+                return _firstname;
             }
             set
             {
                 if (Validation.NameValidation(value))
-                    firstname = value;
+                    _firstname = value;
                 else
                     throw new ArgumentOutOfRangeException("First name cannot be empty");
             }
@@ -54,12 +45,12 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
             get
             {
-                return lastname;
+                return _lastname;
             }
             set
             {
                 if (Validation.NameValidation(value))
-                    firstname = value;
+                    _lastname = value;
                 else
                     throw new ArgumentOutOfRangeException("Last name cannot be empty");
             }
@@ -68,12 +59,12 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
             get
             {
-                return username;
+                return _username;
             }
             set
             {
                 if (Validation.UsernameVAlidation(value))
-                    username = value;
+                    _username = value;
                 else
                     throw new ArgumentOutOfRangeException("Username is either empty or contains illegal characters");
             }
@@ -82,12 +73,12 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
             get
             {
-                return email;
+                return _email;
             }
             set
             {
                 if (Validation.EmailValidation(value))
-                    email = value;
+                    _email = value;
                 else
                     throw new ArgumentException("Invalid Email");
             }
@@ -96,28 +87,39 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
             get
             {
-                return balance;
+                return _balance;
             }
             set
             {
-
+                _balance = value;
             }
         }
 
+        public User(int iD, string firstname, string lastname, string username, string email, decimal balance)
+        {
+            ID = iD;
+            Firstname = firstname;
+            Lastname = lastname;
+            Username = username;
+            Email = email;
+            Balance = balance;
+        }
+
+        
         public int CompareTo(object obj)
         {
             return id.CompareTo(obj);
         }
         private void IsBalanceAboveRequired()
         {
-            if (balance < 50)
+            if (_balance < 50)
             {
                 //must invoke UserBalanceNotif
             }
         }
         public override string ToString()
         {
-            return firstname + lastname + email;
+            return $"{_firstname} {_lastname} Balance: {_balance}";
         }
     }
 }

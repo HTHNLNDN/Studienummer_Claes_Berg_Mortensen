@@ -5,35 +5,37 @@ namespace Studienummer_Claes_Berg_Mortensen.CustomExceptions
 {
     public class BalanceTooLowException : Exception
     {
-        User user;
-        Product product;
-        public BalanceTooLowException(User user, Product product, string message):base(message)
-        {
-            User = user;
-            Product = product;
-        }
+        User _user;
+        Product _product;
+
 
         public User User
         {
             get
             {
-                return user;
+                return _user;
             }
             set
             {
-                user = value;
+                _user = value;
             }
         }
         public Product Product
         {
             get
             {
-                return product;
+                return _product;
             }
             set
             {
-                product = value;
+                _product = value;
             }
+        }
+
+        public BalanceTooLowException(User user, Product product, string message) : base(message)
+        {
+            User = user;
+            Product = product;
         }
     }
 }

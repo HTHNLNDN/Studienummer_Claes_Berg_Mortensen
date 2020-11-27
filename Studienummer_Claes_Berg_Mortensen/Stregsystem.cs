@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Studienummer_Claes_Berg_Mortensen.Events;
+using Studienummer_Claes_Berg_Mortensen.Tools.CSVWriter;
 
 namespace Studienummer_Claes_Berg_Mortensen.Core
 {
@@ -17,21 +18,24 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
 
         public Stregsystem()
         {
-            UserbalanceWarning(new UserBalanceNotificationArgs(null));
+            LoadUsers();
+            LoadProducts();
         }
         public BuyTransaction BuyProduct(User user, Product product)
         {
-            BuyTransaction buyTransactions = new BuyTransaction(user, product);
+            BuyTransaction buyTransactions = new BuyTransaction(user, product, _transactionList.Count);
             buyTransactions.Execute();
+            FileLogger.WriteToLogFile(buyTransactions.ToString(), "transactions.txt");
             if (user.Balance < 5000)
                 UserbalanceWarning(new UserBalanceNotificationArgs(user));
             _transactionList.Add(buyTransactions);
             return buyTransactions;
         }
-        public InsertCashTransaction AddCreditsToAccount(User user, int amount)
+        public InsertCashTransaction AddCreditsToAccount(User user, int amount) 
         {
-            InsertCashTransaction insertCashTransaction = new InsertCashTransaction(user, amount);
+            InsertCashTransaction insertCashTransaction = new InsertCashTransaction(user, amount, _transactionList.Count);
             insertCashTransaction.Execute();
+            FileLogger.WriteToLogFile(insertCashTransaction.ToString(), "transactions.txt");
             _transactionList.Add(insertCashTransaction);
             return insertCashTransaction;
         }
@@ -52,13 +56,17 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
 
             User user = _userList.Find(x => x.Username == username);
             if (user == null)
-                throw new UserNotFoundException();//usernotfoundexception
+                throw new UserNotFoundException(username, "Username Not Found");
             return user;
         }
 
         public IEnumerable<Transaction> GetTransactions(User user, int count)
         {
-            return _transactionList.OrderByDescending(d=>d.Date).Where(t => t.User.Equals(user));
+
+            List<Transaction> newTransactionList = _transactionList.OrderByDescending(d => d.Date).Where(t => t.User.Equals(user)).ToList();
+            if (newTransactionList.Count > 10)
+                return newTransactionList.GetRange(0, count);
+            return newTransactionList;
         }
 
         public IEnumerable<Product> ActiveProducts()
@@ -67,11 +75,13 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         }
         void LoadUsers()
         {
-            User user;
+            CSVUserParser cSVUserParser = new CSVUserParser("users.csv", ',');
+            _userList = cSVUserParser.ParseCSV( cSVUserParser.ReadAndSeperateCSVFile());
         }
         void LoadProducts()
         {
-            Product product;
+            CSVProductParser cSVProductParser = new CSVProductParser("products.csv", ';');
+            _productList = cSVProductParser.ParseCSV(cSVProductParser.ReadAndSeperateCSVFile());
         }
     }
 }

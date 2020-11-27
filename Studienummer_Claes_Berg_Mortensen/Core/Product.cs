@@ -5,30 +5,23 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
 {
     public class Product
     {
-        int id;
-        string name;
-        decimal price;
-        bool active;
-        bool canBeBoughtOnCredit;
+        int _id;
+        string _name;
+        decimal _price;
+        bool _active;
+        bool _canBeBoughtOnCredit;
 
-        public Product(int iD, string name, decimal price, bool active, bool canBeBoughtOnCredit)
-        {
-            ID = iD;
-            Name = name;
-            Price = price;
-            Active = active;
-            CanBeBoughtOnCredit = canBeBoughtOnCredit;
-        }
+ 
         public int ID
         {
             get
             {
-                return id;
+                return _id;
             }
             set
             {
                 if (value > 0)
-                    id = value;
+                    _id = value;
                 else
                     throw new ArgumentOutOfRangeException("Product ID must be 1 or above");
             }
@@ -37,12 +30,12 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
             get
             {
-                return name;
+                return _name;
             }
             set
             {
                 if (Validation.NameValidation(value))
-                    name = value;
+                    _name = value;
                 else
                     throw new ArgumentOutOfRangeException("Name cannot be empty");
             }
@@ -52,38 +45,46 @@ namespace Studienummer_Claes_Berg_Mortensen.Core
         {
             get
             {
-                return price;
+                return _price;
             }
             set
             {
-                price = value;
+                _price = value;
             }
         }
         public bool Active
         {
             get
             {
-                return active;
+                return _active;
             }
             set
             {
-                active = value;
+                _active = value;
             }
         }
         public bool CanBeBoughtOnCredit
         {
             get
             {
-                return canBeBoughtOnCredit;
+                return _canBeBoughtOnCredit;
             }
             set
             {
-                canBeBoughtOnCredit = value;
+                _canBeBoughtOnCredit = value;
             }
+        }
+        public Product(int iD, string name, decimal price, bool active, bool canBeBoughtOnCredit)
+        {
+            ID = iD;
+            Name = name;
+            Price = price;
+            Active = active;
+            CanBeBoughtOnCredit = canBeBoughtOnCredit;
         }
         public override string ToString()
         {
-            return id + name + price;
+            return $"{_id,-10} {_name,-40} {_price,-20}";
         }
     }
 }
